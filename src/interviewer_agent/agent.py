@@ -5,6 +5,7 @@ from typing import Any
 from google.adk.agents import Agent
 
 from researcher_agent.agent import researcher_agent
+from reporter_agent.agent import reporter_agent
 
 
 def _coerce_to_dict(
@@ -190,5 +191,6 @@ root_agent = Agent(
     output_key="user_profile",
     sub_agents=[
         researcher_agent,
+        reporter_agent,
     ]
 )
