@@ -4,6 +4,8 @@ from typing import Any
 
 from google.adk.agents import Agent
 
+from researcher_agent.agent import researcher_agent
+
 
 def _coerce_to_dict(
     value: dict[str, Any] | str | None, field_name: str
@@ -178,10 +180,15 @@ root_agent = Agent(
         "- Do not output raw function-call text.\n"
         "- Final response must be only one valid JSON payload in a single ```json code"
         " block, with no additional prose."
+        "Save plan to session state to be used by the researcher agent."
     ),
     tools=[
         collect_budget_and_location,
         collect_interests_and_profile,
         build_activity_handoff_payload_flat,
     ],
+    output_key="user_profile",
+    sub_agents=[
+        researcher_agent,
+    ]
 )
