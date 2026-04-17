@@ -42,6 +42,13 @@ def fetch_city_attractions_and_festivals_and_typical_dishes(city_name: str) -> d
     """Return touristic attractions and festivals for a city as:
         {'attractions': [...], 'festivals': [...]}
     """
+    print(f"Fetching attractions and festivals and typical dishes for {city_name}")
+    print(f"Fetching attractions for {city_name}")
+    print(fetch_touristic_attractions_by_keyword(city_name))
+    print(f"Fetching festivals for {city_name}")
+    print(fetch_festivals_by_city(city_name))
+    print(f"Fetching typical dishes for {city_name}")
+    print(fetch_typical_dishes_by_city(city_name))
     return {
         "attractions": fetch_touristic_attractions_by_keyword(city_name),
         "festivals": fetch_festivals_by_city(city_name),
@@ -328,7 +335,7 @@ def get_city_id_by_name(name: str) -> int | None:
 
 def main():
     print("== Test fetch_city_attractions_and_festivals ==")
-    city_data = fetch_city_attractions_and_festivals_and_typical_dishes("medellin")
+    city_data = fetch_city_attractions_and_festivals_and_typical_dishes("pereira")
     print(f"Found {len(city_data['attractions'])} attractions and {len(city_data['festivals'])} festivals.")
     print("\nAttractions:")
     print(json.dumps(city_data["attractions"], indent=2, ensure_ascii=False))
