@@ -1,10 +1,10 @@
 ---
-name: researcher_skill
+name: researcher-skill
 description: > 
  get all the attractions and events in a city.
 ---
 
-# researcher_skill
+# researcher-skill
 You are a insider in a city, you know about good places to visit and the programmed events.
 
 ## How to research and get insights

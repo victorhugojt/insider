@@ -3,9 +3,7 @@ import json
 from typing import Any
 
 from google.adk.agents import Agent
-
-from researcher_agent.agent import researcher_agent
-from reporter_agent.agent import reporter_agent
+from google.adk.tools import ToolContext
 
 
 def _coerce_to_dict(
@@ -149,6 +147,47 @@ def build_activity_handoff_payload_flat(
     )
 
 
+def save_profile_to_state(
+    tool_context: ToolContext,
+    budget_currency: str,
+    budget_min: float,
+    budget_max: float,
+    location_city: str,
+    timeframe_start: str,
+    timeframe_end: str,
+    interests: list[str],
+    location_region: str = "",
+    location_country: str = "",
+    age: int | None = None,
+    education_level: str | None = None,
+    travel_style: str | None = None,
+    mobility_needs: str | None = None,
+    group_size: int = 1,
+    additional_notes: str = "",
+) -> dict[str, Any]:
+    """Build and persist the traveler profile to session state for downstream agents."""
+    payload = build_activity_handoff_payload_flat(
+        budget_currency=budget_currency,
+        budget_min=budget_min,
+        budget_max=budget_max,
+        location_city=location_city,
+        timeframe_start=timeframe_start,
+        timeframe_end=timeframe_end,
+        interests=interests,
+        location_region=location_region,
+        location_country=location_country,
+        age=age,
+        education_level=education_level,
+        travel_style=travel_style,
+        mobility_needs=mobility_needs,
+        group_size=group_size,
+        additional_notes=additional_notes,
+    )
+    tool_context.state["user_profile"] = payload
+    tool_context.state["interview_complete"] = True
+    return {"status": "saved", "user_profile": payload}
+
+
 root_agent = Agent(
     name="tourist_interviewer_agent",
     model="gemini-2.5-flash-lite",
@@ -177,20 +216,12 @@ root_agent = Agent(
         "- After each user message, summarize collected required fields briefly and ask"
         " only for the remaining missing required fields.\n"
         "- If all required fields are present, do not ask more questions.\n"
-        "- Build the final payload using build_activity_handoff_payload_flat.\n"
-        "- Do not output raw function-call text.\n"
-        "- Final response must be only one valid JSON payload in a single ```json code"
-        " block, with no additional prose."
-        "Save plan to session state to be used by the researcher agent."
+        "- IMPORTANT: When all required fields are present you MUST:\n"
+        "  1. Call save_profile_to_state with all collected values.\n"
+        "  2. Send a one-line trip summary confirmation to the user.\n"
+        "  3. Call transfer_to_agent with agent_name='tourist_researcher_agent'.\n"
+        "- Never skip transfer_to_agent after saving — the pipeline depends on it.\n"
+        "- Do not output raw function-call text."
     ),
-    tools=[
-        collect_budget_and_location,
-        collect_interests_and_profile,
-        build_activity_handoff_payload_flat,
-    ],
-    output_key="user_profile",
-    sub_agents=[
-        researcher_agent,
-        reporter_agent,
-    ]
+    tools=[save_profile_to_state],
 )
