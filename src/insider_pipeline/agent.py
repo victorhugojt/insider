@@ -1,8 +1,8 @@
 from google.adk.agents import Agent
 
-from interviewer_agent.agent import root_agent as interviewer_agent
-from researcher_agent.agent import researcher_agent
-from reporter_agent.agent import reporter_agent
+from .interviewer_agent.agent import root_agent as interviewer_agent
+from .researcher_agent.agent import researcher_agent
+from .reporter_agent.agent import reporter_agent
 
 
 root_agent = Agent(
