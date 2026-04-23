@@ -4,7 +4,7 @@ from typing import Any
 from google.adk.agents import Agent
 from google.adk.skills import load_skill_from_dir
 from google.adk.tools import ToolContext
-from helpers.tools.common_tools import fetch_city_attractions_and_festivals_and_typical_dishes
+from ..helpers.tools.common_tools import fetch_city_attractions_and_festivals_and_typical_dishes
 
 
 def get_attractions_from_state(tool_context: ToolContext) -> dict[str, Any]:
