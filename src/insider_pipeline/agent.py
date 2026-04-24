@@ -3,6 +3,7 @@ from google.adk.agents import Agent
 from .interviewer_agent.agent import root_agent as interviewer_agent
 from .researcher_agent.agent import researcher_agent
 from .reporter_agent.agent import reporter_agent
+from .weather_agent.agent import weather_agent
 
 
 root_agent = Agent(
@@ -16,5 +17,5 @@ root_agent = Agent(
         " transfer to tourist_interviewer_agent. Do not greet the user or say anything"
         " — just transfer."
     ),
-    sub_agents=[interviewer_agent, researcher_agent, reporter_agent],
+    sub_agents=[interviewer_agent, researcher_agent, reporter_agent, weather_agent],
 )

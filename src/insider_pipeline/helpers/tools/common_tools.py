@@ -1,10 +1,40 @@
 from __future__ import annotations
-
+import httpx
 import json
 import unicodedata
 from typing import Any
 from urllib.parse import quote
 from urllib.request import Request, urlopen
+
+
+def get_weather(city: str) -> dict:
+    """
+    Fetches current weather for a given city using the wttr.in API.
+    Args:
+        city: The name of the city to fetch weather for.
+    Returns:
+        A dictionary containing weather data or an error message.
+    """
+    try:
+        url = f"https://wttr.in/{city}?format=j1"
+        response = httpx.get(url, timeout=10)
+        response.raise_for_status()
+        data = response.json()
+        current = data["current_condition"][0]
+        area = data["nearest_area"][0]
+        return {
+            "city": area["areaName"][0]["value"],
+            "country": area["country"][0]["value"],
+            "temp_c": current["temp_C"],
+            "feels_like_c": current["FeelsLikeC"],
+            "condition": current["weatherDesc"][0]["value"],
+            "wind_kmph": current["windspeedKmph"],
+            "humidity": current["humidity"],
+        }
+    except httpx.HTTPError as e:
+        return {"error": f"Could not fetch weather: {str(e)}"}
+    except KeyError:
+        return {"error": f"Location '{city}' not found. Please check the city name."}
 
 
 def _normalize(text: str) -> str:
